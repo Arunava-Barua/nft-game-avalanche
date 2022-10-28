@@ -1,14 +1,32 @@
 import React from 'react';
-import { useContext } from 'react';
-import { PageHOC } from '../components';
+import { useContext, useState } from 'react';
+import { PageHOC, Input, Button } from '../components';
 
 import { useGlobalContext } from '../context';
 
 const Home = () => {
-  const {demo} = useGlobalContext();
+  const {contract, walletAddress} = useGlobalContext();
+  const [playerName, setPlayerName] = useState('');
+
+  // handleClick for the register button
+  const handleClick = async () => {
+
+  }
+
   return (
-    <div>
-      <h1 className='text-white text-3xl'>Hello from the create battle page {demo}</h1>
+    <div className='flex flex-col'>
+      <Input 
+        label = "Name"
+        placeholder = "Enter your player name"
+        value={playerName}
+        handleValueChange={setPlayerName}
+      />
+
+      <Button 
+        title="Register"
+        handleClick={handleClick}
+        restStyles="mt-6"
+      />
     </div>
   )
 };
