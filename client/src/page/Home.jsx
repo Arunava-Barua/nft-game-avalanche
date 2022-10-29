@@ -21,8 +21,9 @@ const Home = () => {
           type: 'info',
           message: `${playerName} is being summoned!`
         })
-      }
+      } else throw Error('WRRRRONNNNGG');
     } catch (error) {
+      console.log(error);
       setShowAlert({
         status: true,
         type: 'failure',

@@ -14,7 +14,7 @@ const PageHOC = (Component, title, description) => () => {
     <div className={styles.hocContainer}>
         {showAlert?.status && <Alert type={showAlert.type} message={showAlert.message}/>}
         <div className={styles.hocContentBox}>
-            <img width={200} src={logo} alt="logo" onClick={() => navigate('/')} />
+            <img width={200} src={logo} alt="logo" className="cursor-pointer" onClick={() => navigate('/')} />
 
             <div className={styles.hocBodyWrapper}>
                 <div className="flex flex-row w-full">
