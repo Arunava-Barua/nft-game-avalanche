@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom'
 
 import {logo, heroImg} from '../assets';
@@ -8,13 +8,26 @@ import { useGlobalContext } from '../context';
 import {Alert} from './index'
 
 const PageHOC = (Component, title, description) => () => {
-    const {showAlert} = useGlobalContext();
+    const {showAlert,contract, walletAddress} = useGlobalContext();
     const navigate = useNavigate();
+    const [registeredPlayer, setRegisteredPlayer] = useState(false);
+
+    useEffect(() => {
+        const checkForPlayerToken = async () => {
+          const playerExists = await contract.isPlayer(walletAddress);
+          const playerTokenExists = await contract.isPlayerToken(walletAddress);
+    
+          if (playerExists && playerTokenExists) setRegisteredPlayer(true);
+        }
+    
+        if (contract) checkForPlayerToken();
+      }, [contract])
+
   return (
     <div className={styles.hocContainer}>
         {showAlert?.status && <Alert type={showAlert.type} message={showAlert.message}/>}
         <div className={styles.hocContentBox}>
-            <img width={200} src={logo} alt="logo" className="cursor-pointer" onClick={() => navigate('/')} />
+            <img width={200} src={logo} alt="logo" className="cursor-pointer" onClick={() => registeredPlayer ? navigate('/create-battle') : navigate('/')} />
 
             <div className={styles.hocBodyWrapper}>
                 <div className="flex flex-row w-full">
