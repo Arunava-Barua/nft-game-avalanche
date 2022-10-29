@@ -5,7 +5,7 @@ import { useGlobalContext } from "../context";
 import { Button, Input, PageHOC, GameLoad } from "../components";
 
 const CreateBattle = () => {
-  const {contract, battleName, setBattleName} = useGlobalContext();
+  const {contract, battleName, setBattleName, gameData, walletAddress} = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false)
   const navigate = useNavigate();
   
@@ -20,6 +20,17 @@ const CreateBattle = () => {
       console.log(error);
     }
   }
+
+  useEffect(() => {
+    if(gameData?.myActiveBattle?.battleStatus === 0) {
+      setWaitBattle(true);
+    } 
+    // else setWaitBattle(false)
+
+    // alert('Wallet address changed')
+
+    // console.log(walletAddress);
+  }, [gameData, walletAddress])
 
   return (
     <>

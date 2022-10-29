@@ -18,8 +18,12 @@ export const GlobalContextProvider = ({ children }) => {
   const [walletAddress, setWalletAddress] = useState('');
   const [provider, setProvider] = useState('');
   const [contract, setContract] = useState('');
-  const [showAlert, setShowAlert] = useState({status: false, type: 'info', message: ''})
-  const [battleName, setBattleName] = useState('')
+  const [showAlert, setShowAlert] = useState({status: false, type: 'info', message: ''});
+  const [battleName, setBattleName] = useState('');
+  const [gameData, setGameData] = useState({
+    players: [], pendingBattles: [], activeBattle: null
+  })
+  const [updateGamedata, setUpdateGamedata] = useState(0)
 
   const navigate = useNavigate();
   // connect to core wallet and set the wallet address
@@ -55,7 +59,7 @@ export const GlobalContextProvider = ({ children }) => {
   useEffect(()=> {
     if (contract) {
       createEventListeners({
-        navigate, contract, provider, walletAddress, setShowAlert
+        navigate, contract, provider, walletAddress, setShowAlert, setUpdateGamedata
       })
     }
   }, [contract])
@@ -69,13 +73,36 @@ export const GlobalContextProvider = ({ children }) => {
       return () => clearTimeout(timer);
     }
   
-  }, [showAlert])
+  }, [showAlert]);
+
+  // set game data to state
+  useEffect(() => {
+    const fetchGameData = async () => {
+      const fetchedBattles = await contract.getAllBattles();
+      const pendingBattles = fetchedBattles.filter(battle => battle.battleStatus === 0);
+      let myActiveBattle = null;
+
+      fetchedBattles.forEach((battle) => {
+        if (battle.players.find((player) => player.toLowerCase() === walletAddress.toLowerCase())) {
+          if (battle.winner.startsWith('0x00')) {
+            myActiveBattle = battle;
+          }
+        }
+      })
+
+      setGameData({pendingBattles: pendingBattles.slice(1) , myActiveBattle});
+      console.log(fetchedBattles);
+    }
+
+    if (contract) fetchGameData();
+  }, [contract, updateGamedata])
+  
   
 
   return (
     <GlobalContext.Provider
       value={{
-        contract, walletAddress, showAlert, setShowAlert, battleName, setBattleName
+        contract, walletAddress, showAlert, setShowAlert, battleName, setBattleName, gameData, setUpdateGamedata
       }}
     >
       {children}
